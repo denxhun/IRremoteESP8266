@@ -168,7 +168,7 @@ const uint32_t kMqttReconnectTime = 5000;  // Delay(ms) between reconnect tries.
 #define argBits "bits"
 #define argRepeat "repeats"
 
-#define _MY_VERSION_ "v0.5.1"
+#define _MY_VERSION_ "v0.5.3"
 
 #if IR_LED != 1  // Disable debug output if the LED is on the TX (D1) pin.
 #undef DEBUG
@@ -423,6 +423,7 @@ void handleRoot() {
         "<option value='20'>Mitsubishi</option>"
         "<option value='32'>Toshiba</option>"
         "<option value='28'>Trotec</option>"
+        "<option value='45'>Whirlpool</option>"
       "</select>"
       " State code: 0x"
       "<input type='text' name='code' size='" + String(kStateSizeMax * 2) +
@@ -528,6 +529,9 @@ void parseStringAndSendAirCon(const uint16_t irType, const String str) {
       break;
     case HITACHI_AC2:
       stateSize = kHitachiAc2StateLength;
+      break;
+    case WHIRLPOOL_AC:
+      stateSize = kWhirlpoolAcStateLength;
       break;
     default:  // Not a protocol we expected. Abort.
       debug("Unexpected AirCon protocol detected. Ignoring.");
@@ -1279,7 +1283,6 @@ void sendIRCode(int const ir_type, uint64_t const code, char const * code_str,
       ir_type == GLOBALCACHE) {
     debug("Code: ");
     debug(code_str);
-    debug("Repeats: " + String(repeat));
     // Confirm what we were asked to send was sent.
 #ifdef MQTT_ENABLE
     if (ir_type == PRONTO && repeat > 0)
